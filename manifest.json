@@ -1,0 +1,21 @@
+{
+    "name": "WPEngine Helper",
+    "version": "1.0.0",
+    "description": "Adds some extra functionality to the WPEngine Dashboard",
+    "manifest_version": 3,
+    "author": "Sampurna Chapagain",
+    "action":{
+        "default_title": "WPEngine Helper"
+    },
+    "permissions": [
+        "storage",
+        "activeTab"
+    ],
+    "content_scripts": [
+        {
+          "matches": ["https://my.wpengine.com/*"],
+          "css": ["dist/wpengine.css"],
+          "js": ["dist/wpengine.js"]
+        }
+    ]
+}
