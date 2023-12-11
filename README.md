@@ -1,6 +1,6 @@
 # WP Engine Helper
 
-A Chrome extension to add extra functionality to the WP Engine Dashboard.
+A Firefox extension to add extra functionality to the WP Engine Dashboard.
 
 ### Features
 
