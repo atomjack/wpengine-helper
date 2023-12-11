@@ -13,20 +13,27 @@ class WPEngineHelper {
     updateDefaultsDisplay() {
         const el = document.querySelector("#new_checkpoint");
         if (el) {
-            chrome.storage.sync.get(["description", "emails"], function (items) {
-                setTimeout(() => {
-                    if (items.description)
-                        document.querySelector('#checkpoint_comment').value = items.description;
-                    if (items.emails)
-                        document.querySelector('#checkpoint_notification_emails').value = items.emails;
-                }, 500);
-            });
+            try {
+                browser.storage.sync.get(["description", "emails"]).then(function (items) {
+                    if (items) {
+                        setTimeout(() => {
+                            if (items.description)
+                                document.querySelector('#checkpoint_comment').value = items.description;
+                            if (items.emails)
+                                document.querySelector('#checkpoint_notification_emails').value = items.emails;
+                        }, 500);
+                    }
+                });
+            }
+            catch (e) {
+                console.log("error: ", e);
+            }
         }
         else {
         }
     }
     setDefaults() {
-        chrome.storage.sync.set({ "description": document.querySelector('#checkpoint_comment').value, "emails": document.querySelector('#checkpoint_notification_emails').value }, function () { });
+        browser.storage.sync.set({ description: document.querySelector('#checkpoint_comment').value, emails: document.querySelector('#checkpoint_notification_emails').value }, function () { });
     }
     addSaveDefaultsButton() {
         const self = this;

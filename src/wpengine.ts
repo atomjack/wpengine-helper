@@ -5,41 +5,46 @@ class WPEngineHelper {
     constructor() {
         const self = this;
         this.docReady(() => {
-            setTimeout(function() {
+            setTimeout(function () {
                 self.modSFTPPage();
                 self.updateDefaultsDisplay();
                 self.addSaveDefaultsButton();
             }, 500);
         });
     }
-    
+
     updateDefaultsDisplay(): void {
         const el = document.querySelector("#new_checkpoint");
-        if(el) {
-            chrome.storage.sync.get(["description", "emails"], function(items){
-                //  items = [ { "yourBody": "myBody" } ]
-                // console.log("items: ", items);
-                setTimeout(() => {
-                    if(items.description)
-                        (document.querySelector('#checkpoint_comment') as HTMLInputElement).value = items.description;
-                    if(items.emails)
-                        (document.querySelector('#checkpoint_notification_emails') as HTMLInputElement).value = items.emails;
-                }, 500);
-            });
-            
+        if (el) {
+            try {
+                // @ts-ignore
+                browser.storage.sync.get(["description", "emails"]).then(function (items) {
+                    if (items) {
+                        setTimeout(() => {
+                            if (items.description)
+                                (document.querySelector('#checkpoint_comment') as HTMLInputElement).value = items.description;
+                            if (items.emails)
+                                (document.querySelector('#checkpoint_notification_emails') as HTMLInputElement).value = items.emails;
+                        }, 500);
+                    }
+                });
+            } catch (e) {
+                console.log("error: ", e);
+            }
         } else {
             // console.log("Backup page not found");
         }
     }
 
     setDefaults(): void {
-        chrome.storage.sync.set({ "description": (document.querySelector('#checkpoint_comment') as HTMLInputElement).value, "emails": (document.querySelector('#checkpoint_notification_emails') as HTMLInputElement).value }, function(){});
+        // @ts-ignore
+        browser.storage.sync.set({ description: (document.querySelector('#checkpoint_comment') as HTMLInputElement).value, emails: (document.querySelector('#checkpoint_notification_emails') as HTMLInputElement).value }, function () { });
     }
 
     addSaveDefaultsButton(): void {
         const self = this;
         const el = document.querySelector("#new_checkpoint");
-        if(el) {
+        if (el) {
             let button = document.createElement('button');
             button.classList.add('saveDefaults');
             button.classList.add('btn');
@@ -55,7 +60,7 @@ class WPEngineHelper {
                     button.innerHTML = 'Save Defaults';
                 }, 1500);
             });
-            if(footer) {
+            if (footer) {
                 footer.prepend(button);
             }
         }
@@ -63,11 +68,11 @@ class WPEngineHelper {
 
     modSFTPPage(): void {
         const sftppage = document.querySelectorAll('[id^="SftpUsersPage"]');
-        if(sftppage[0]) {
+        if (sftppage[0]) {
             const strongs = sftppage[0].querySelectorAll('strong');
             strongs.forEach((strong) => {
                 const parent = strong.parentElement;
-                if(parent) {
+                if (parent) {
                     let a = document.createElement('a');
                     a.classList.add('copyToClipboard1');
                     parent.append(a);
@@ -76,9 +81,9 @@ class WPEngineHelper {
 
             const buttons = sftppage[0].querySelectorAll('button');
             buttons.forEach((button) => {
-                if(button.classList.contains('MuiButton-textPrimary')) {
+                if (button.classList.contains('MuiButton-textPrimary')) {
                     const parent = button.parentElement;
-                    if(parent) {
+                    if (parent) {
                         parent.style.display = 'flex';
                         parent.style.alignItems = 'center';
                         // parent.style['align-items'] = 'center';
@@ -93,10 +98,10 @@ class WPEngineHelper {
                 a.addEventListener('click', (e) => {
                     e.preventDefault();
                     const parent = a.parentElement;
-                    if(parent) {
+                    if (parent) {
                         const re = /\<strong\>.*\<\/strong\>(.*)\<a.*\>\<\/a\>/;
                         const matches = parent.innerHTML.match(re);
-                        if(matches) {
+                        if (matches) {
                             navigator.clipboard.writeText(matches[1]);
                         }
                     }
@@ -107,9 +112,9 @@ class WPEngineHelper {
                 a.addEventListener('click', (e) => {
                     e.preventDefault();
                     const parent = a.parentElement;
-                    if(parent) {
+                    if (parent) {
                         let text = (parent.querySelector('button') as HTMLButtonElement).textContent;
-                        if(text)
+                        if (text)
                             navigator.clipboard.writeText(text);
                     }
                 });
